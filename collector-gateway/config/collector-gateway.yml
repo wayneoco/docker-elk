@@ -1,0 +1,33 @@
+receivers:
+  # ...
+  otlp:
+
+processors:
+  # ...
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 2000
+  batch:
+
+exporters:
+  logging:
+    loglevel: warn
+  otlphttp:
+    # Elastic APM server https endpoint without the "https://" prefix
+    endpoint: "${ELASTIC_APM_SERVER_ENDPOINT}"
+    headers:
+      # Elastic APM Server secret token
+      # Authorization: "Bearer ${ELASTIC_APM_SECRET_TOKEN}"
+    compression: none
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      exporters: [logging, otlphttp]
+    metrics:
+      receivers: [otlp]
+      exporters: [logging, otlphttp]
+    logs:
+      receivers: [otlp]
+      exporters: [logging, otlphttp]
